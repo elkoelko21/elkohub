@@ -1,0 +1,205 @@
+game.StarterGui:SetCore("SendNotification", {
+    Title = "Strongest Battleground Script Loaded",
+    Text = "skibidi toilet",
+    Icon = nil,
+    Duration = 20
+})
+
+local speed = 0
+local flyspeed = 0
+local speednumber, flynumber
+local connections = {}
+
+local player = game.Players:FindFirstChild("opgamingchairezP")
+if not player then
+    return
+end
+
+local chr = player.Character or player.CharacterAdded:Wait()
+local hum = chr:WaitForChild("Humanoid")
+local humrootpart = chr:WaitForChild("HumanoidRootPart")
+
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "KubaExampleUI"
+screenGui.Parent = player:WaitForChild("PlayerGui")
+
+local frame = Instance.new("Frame")
+frame.Name = "KubaFrame"
+frame.Size = UDim2.new(0, 200, 0, 200)
+frame.Position = UDim2.new(0.5, 700, 0.5, 120)
+frame.BackgroundColor3 = Color3.new(1, 1, 1)
+frame.BorderSizePixel = 2
+frame.Parent = screenGui
+
+local textBox = Instance.new("TextBox")
+textBox.Name = "KubaTextBox1"
+textBox.Size = UDim2.new(0.3, 0, 0.15, 0)
+textBox.Position = UDim2.new(0, 5, 0.05, 0)
+textBox.Text = "0"
+textBox.Parent = frame
+
+local textBox2 = Instance.new("TextBox")
+textBox2.Name = "KubaTextBox2"
+textBox2.Size = UDim2.new(0.3, 0, 0.15, 0)
+textBox2.Position = UDim2.new(0, 5, 0.25, 0)
+textBox2.Text = "1"
+textBox2.Parent = frame
+
+local closeButton = Instance.new("TextButton")
+closeButton.Name = "KubaCloseButton"
+closeButton.Size = UDim2.new(0, 20, 0, 20)
+closeButton.Position = UDim2.new(1, -25, 0, 5)
+closeButton.BackgroundColor3 = Color3.new(0.3, 0.3, 0.3)
+closeButton.Text = "X"
+closeButton.TextColor3 = Color3.new(1, 1, 1)
+closeButton.TextScaled = true
+closeButton.Parent = frame
+
+local function onTextChanged()
+    speednumber = tonumber(textBox.Text)
+    if speednumber then
+        speed = speednumber
+    end
+end
+
+local function onTextChanged2()
+    flynumber = tonumber(textBox2.Text)
+    if flynumber then 
+        flyspeed = flynumber
+    end
+end
+
+textBox.Changed:Connect(onTextChanged)
+textBox2.Changed:Connect(onTextChanged2)
+
+local function isNumber(str)
+    return tonumber(str) ~= nil or str == 'inf'
+end
+
+local tpwalking = true
+
+-- Heartbeat function to handle movement
+local function onHeartbeat()
+    if tpwalking and hum and hum.Parent then
+        if hum.MoveDirection.Magnitude > 0 then
+            if speed and isNumber(tostring(speed)) then
+                chr:TranslateBy(hum.MoveDirection * speed)
+            else
+                chr:TranslateBy(hum.MoveDirection)
+            end
+        end
+    end
+end
+
+table.insert(connections, game:GetService("RunService").Heartbeat:Connect(onHeartbeat))
+
+
+
+local UserInputService = game:GetService("UserInputService")
+local flying = false
+local additionalflying = false
+local bodyVelocity
+
+local function startFlying()
+    bodyVelocity = Instance.new("BodyVelocity")
+    bodyVelocity.Velocity = Vector3.new(0, 0, 0)
+    bodyVelocity.MaxForce = Vector3.new(4000, 4000, 4000)
+    bodyVelocity.Parent = humrootpart
+    flying = true
+end
+
+local function stopFlying()
+    if bodyVelocity then 
+        bodyVelocity:Destroy() 
+        bodyVelocity = nil
+    end
+    flying = false
+end
+
+closeButton.MouseButton1Click:Connect(function()
+    for _, connection in pairs(connections) do
+        connection:Disconnect()
+    end
+    textBox.Text = "0"
+    screenGui:Destroy()
+    speed = 0
+    game.StarterGui:SetCore("SendNotification", {
+        Title = "Script Stopped",
+        Text = "The script has been stopped",
+        Icon = nil,
+        Duration = 5
+    })
+    stopFlying()
+end)
+
+local function onKeyPress(input, gameProcessed)
+    if input.UserInputType == Enum.UserInputType.Keyboard and not gameProcessed then
+        if input.KeyCode == Enum.KeyCode.E then
+            if flying then
+                stopFlying()
+                game.StarterGui:SetCore("SendNotification", {
+                    Title = "Flying Disabled",
+                    Text = "You have stopped flying",
+                    Icon = nil,
+                    Duration = 1
+                })
+            else
+                startFlying()
+                game.StarterGui:SetCore("SendNotification", {
+                    Title = "Flying Enabled",
+                    Text = "You are now flying",
+                    Icon = nil,
+                    Duration = 1
+                })
+            end
+        end
+
+        if flying then
+            if input.KeyCode == Enum.KeyCode.R then
+                additionalflying = true
+                while additionalflying do
+                    chr:MoveTo(humrootpart.Position + Vector3.new(0, flyspeed, 0))
+                    wait(0.01)
+                end
+            end
+
+            if input.KeyCode == Enum.KeyCode.F then
+                additionalflying = true
+                while additionalflying do
+                    chr:MoveTo(humrootpart.Position + Vector3.new(0, -flyspeed, 0))
+                    wait(0.01)
+                end
+            end
+        end
+
+        if input.KeyCode == Enum.KeyCode.M then
+            for _, connection in pairs(connections) do
+                connection:Disconnect()
+            end
+            textBox.Text = "0"
+            screenGui:Destroy()
+            speed = 0
+            game.StarterGui:SetCore("SendNotification", {
+                Title = "Script Stopped",
+                Text = "The script has been stopped",
+                Icon = nil,
+                Duration = 5
+            })
+            stopFlying()
+        end
+    end
+end
+
+local function onKeyRelease(input, gameProcessed)
+    if input.UserInputType == Enum.UserInputType.Keyboard and not gameProcessed then
+        if flying then
+            if input.KeyCode == Enum.KeyCode.R or input.KeyCode == Enum.KeyCode.F then
+                bodyVelocity.Velocity = Vector3.new(0, 0, 0)
+                additionalflying = false
+            end
+        end
+    end
+end
+
+table.insert(connections, UserInputService.InputBegan:Connect(onKeyPress))
+table.insert(connections, UserInputService.InputEnded:Connect(onKeyRelease))
