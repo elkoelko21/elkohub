@@ -1,6 +1,6 @@
 game.StarterGui:SetCore("SendNotification", {
-    Title = "Strongest Battleground Script Loaded",
-    Text = "skibidi toilet",
+    Title = "Script Loaded",
+    Text = "",
     Icon = nil,
     Duration = 20
 })
