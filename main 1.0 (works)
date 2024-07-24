@@ -29,7 +29,6 @@ frame.BackgroundColor3 = Color3.new(1, 1, 1)
 frame.BorderSizePixel = 2
 frame.Parent = screenGui
 
--- Create a new TextBox
 local textBox = Instance.new("TextBox")
 textBox.Name = "KubaTextBox1"
 textBox.Size = UDim2.new(0.3, 0, 0.15, 0)
@@ -130,7 +129,6 @@ closeButton.MouseButton1Click:Connect(function()
     stopFlying()
 end)
 
--- Function to handle key press
 local function onKeyPress(input, gameProcessed)
     if input.UserInputType == Enum.UserInputType.Keyboard and not gameProcessed then
         if input.KeyCode == Enum.KeyCode.E then
@@ -183,7 +181,6 @@ local function onKeyPress(input, gameProcessed)
     end
 end
 
--- Function to handle key release
 local function onKeyRelease(input, gameProcessed)
     if input.UserInputType == Enum.UserInputType.Keyboard and not gameProcessed then
         if flying then
@@ -194,6 +191,5 @@ local function onKeyRelease(input, gameProcessed)
     end
 end
 
--- Connect the input and chat functions
 table.insert(connections, UserInputService.InputBegan:Connect(onKeyPress))
 table.insert(connections, UserInputService.InputEnded:Connect(onKeyRelease))
