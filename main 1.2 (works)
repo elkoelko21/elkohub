@@ -1,3 +1,4 @@
+-- 1.2
 game.StarterGui:SetCore("SendNotification", {
     Title = "Script Loaded",
     Text = "",
