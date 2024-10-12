@@ -1,0 +1,12 @@
+local folder = Instance.new("Folder", workspace)
+folder.Name = "enclosedboxdd"
+
+local function partcreate(size, position)
+    local part = Instance.new("Part", folder)
+    part.Size = size
+    part.Position = position
+    part.Transparency = 0.5
+    part.Anchored = true
+end
+
+partcreate(Vector3.new(2048, 2, 2048), Vector3.new(0, -495, 0))
